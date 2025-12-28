@@ -1,26 +1,22 @@
 package com.fedi4.flowershop2
 
+
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.TextView
+import android.widget.ListView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.fedi4.flowershop2.db.BasketEntity
-
 import com.fedi4.flowershop2.db.BasketViewModelFactory
-import kotlinx.coroutines.launch
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStreamReader
+
 
 class BasketActivity : AppCompatActivity(){
 
     var basket: HashMap<Int, Int> = HashMap<Int, Int>()
+    var basketStr: Array<String> = arrayOf<String>()
 
     var viewModel: BasketViewModel? = null
 
@@ -30,14 +26,28 @@ class BasketActivity : AppCompatActivity(){
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.acticity_basket)
+        setContentView(R.layout.activity_basket)
 
 
         var modelFactory: BasketViewModelFactory = BasketViewModelFactory(application)
         viewModel = ViewModelProvider(this, modelFactory).get(BasketViewModel::class.java)
 
 
-        val textView = findViewById<TextView>(R.id.textView)
+        val listView = findViewById<ListView?>(R.id.listView)
+
+
+// определяем строковый массив
+        basketStr = arrayOf<String>("thjrefrdgr", "rfgdrhdrtgeswrg")
+
+
+
+// используем адаптер данных
+        val adapter = ArrayAdapter<String?>(
+            this,
+            R.layout.basket_item, basketStr
+        )
+
+        listView.setAdapter(adapter)
 
 
         val buttonBack = findViewById<Button>(R.id.buttonBack)
@@ -50,7 +60,17 @@ class BasketActivity : AppCompatActivity(){
         viewModel?.getData()?.observe(this) {
             Log.d("MainActivity", "Data changed: $it")
             basket = generateBasket(it)
-            textView.text = generate_text_view()
+
+
+            generate_str_basket()
+
+
+            for (i in basketStr.indices) {
+
+                Log.d("BasketActivity", "added entry to view: ${basketStr[i]}")
+            }
+            adapter.notifyDataSetChanged()
+
 
         }
         viewModel?.getData()
@@ -69,16 +89,13 @@ class BasketActivity : AppCompatActivity(){
         return basket
     }
 
-    fun generate_text_view() : String {
-
-        var text = ""
+    fun generate_str_basket(){
 
         basket.forEach { (key, value) ->
             var product: Product = Products.getProductByIndex(key) as Product
-            text += product.name + " - " + value + "pcs - " + product.price*value + "$\n"
+            basketStr += product.name + " - " + value + "pcs - " + product.price*value + "$\n"
         }
 
-        return text;
 
     }
 

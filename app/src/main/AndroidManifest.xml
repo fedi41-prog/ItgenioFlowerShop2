@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FlowerShop2">
         <activity
+            android:name=".BasketActivity2"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -22,8 +25,7 @@
         </activity>
         <activity
             android:name=".BasketActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
     </application>
 
 </manifest>
