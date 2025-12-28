@@ -57,7 +57,7 @@ class BasketActivity : AppCompatActivity(){
     }
 
     fun generateBasket(data: List<BasketEntity>) : HashMap<Int, Int> {
-        var basket: HashMap<Int, Int> = HashMap<Int, Int>()
+        var basket: HashMap<Int, Int> = HashMap()
 
 
         for (entry in data) {

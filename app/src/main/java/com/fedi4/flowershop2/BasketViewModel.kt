@@ -1,17 +1,21 @@
 package com.fedi4.flowershop2
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import com.fedi4.flowershop2.db.BasketDatabase
 import com.fedi4.flowershop2.db.BasketEntity
-import com.fedi4.flowershop2.db.BasketEntry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class BasketViewModel(application: Application) : ViewModel() {
-    var dataa: LiveData<List<BasketEntity>>? = null
+    var liveData: LiveData<List<BasketEntity>>? = null
     var db: BasketDatabase? = Dependencies.getAppDatabase(application)
+    private val newBasketEntity = MutableLiveData<BasketEntity>()
 
     //fun init(context: Context) {
     //    val appDatabase = Dependencies.getAppDatabase(context)
@@ -20,13 +24,21 @@ class BasketViewModel(application: Application) : ViewModel() {
     //}
 
     fun getData(): LiveData<List<BasketEntity>>? {
-        if (dataa == null) {
-            dataa = db?.getStatisticDao()?.getAllBasketEntries()
+        if (liveData == null) {
+            liveData = db?.getStatisticDao()?.getAllBasketEntries()
 
         }
-        return dataa
+        return liveData
     }
-    fun insert(entity: BasketEntity) {
-        db?.getStatisticDao()?.insertNewBasketEntry(entity)
+    fun insert(entity: BasketEntity)  = runBlocking {
+        launch(Dispatchers.IO) {
+            db?.getStatisticDao()?.insertNewBasketEntry(entity)
+        }
+        val result = async(Dispatchers.Default) {
+
+            db?.getStatisticDao()?.getAllBasketEntries()
+        }
+
+        liveData = result.await()
     }
 }
