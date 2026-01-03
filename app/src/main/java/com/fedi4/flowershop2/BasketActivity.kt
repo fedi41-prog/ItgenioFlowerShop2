@@ -3,6 +3,10 @@ package com.fedi4.flowershop2
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AbsListView
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
@@ -16,7 +20,7 @@ import com.fedi4.flowershop2.db.BasketViewModelFactory
 class BasketActivity : AppCompatActivity(){
 
     var basket: HashMap<Int, Int> = HashMap<Int, Int>()
-    var basketStr: Array<String> = arrayOf<String>()
+    var basketStr: MutableList<String> = MutableList(0, {""});
 
     var viewModel: BasketViewModel? = null
 
@@ -37,7 +41,6 @@ class BasketActivity : AppCompatActivity(){
 
 
 // определяем строковый массив
-        basketStr = arrayOf<String>("thjrefrdgr", "rfgdrhdrtgeswrg")
 
 
 
@@ -74,6 +77,52 @@ class BasketActivity : AppCompatActivity(){
 
         }
         viewModel?.getData()
+
+
+        //lvMain.setOnItemClickListener(object : OnItemClickListener {
+        //    override fun onItemClick(
+        //        parent: AdapterView<*>?, view: View?,
+        //        position: Int, id: Long
+        //    ) {
+        //        Log.d(
+        //            LOG_TAG, ("itemClick: position = " + position + ", id = "
+        //                    + id)
+        //        )
+        //    }
+        //})
+
+        //lvMain.setOnItemSelectedListener(object : OnItemSelectedListener() {
+        //    fun onItemSelected(
+        //        parent: AdapterView<*>?, view: View?,
+        //        position: Int, id: Long
+        //    ) {
+        //        Log.d(
+        //            LOG_TAG, ("itemSelect: position = " + position + ", id = "
+        //                    + id)
+        //        )
+        //    }
+
+        //    fun onNothingSelected(parent: AdapterView<*>?) {
+        //        Log.d(LOG_TAG, "itemSelect: nothing")
+        //    }
+        //})
+
+        //lvMain.setOnScrollListener(object : OnScrollListener() {
+        //    fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
+        //        Log.d(LOG_TAG, "scrollState = " + scrollState)
+        //    }
+
+        //    fun onScroll(
+        //        view: AbsListView?, firstVisibleItem: Int,
+        //        visibleItemCount: Int, totalItemCount: Int
+        //    ) {
+        //        Log.d(
+        //            LOG_TAG, ("scroll: firstVisibleItem = " + firstVisibleItem
+        //                    + ", visibleItemCount" + visibleItemCount
+        //                    + ", totalItemCount" + totalItemCount)
+        //        )
+        //    }
+        //})
     }
 
     fun generateBasket(data: List<BasketEntity>) : HashMap<Int, Int> {
@@ -93,7 +142,7 @@ class BasketActivity : AppCompatActivity(){
 
         basket.forEach { (key, value) ->
             var product: Product = Products.getProductByIndex(key) as Product
-            basketStr += product.name + " - " + value + "pcs - " + product.price*value + "$\n"
+            basketStr.add(product.name + " - " + value + "pcs - " + product.price*value + "$\n")
         }
 
 
